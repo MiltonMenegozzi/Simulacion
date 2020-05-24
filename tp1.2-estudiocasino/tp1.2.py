@@ -87,6 +87,10 @@ def graficoDineroPrimeraTirada(dineroTiempo, titulo,dineroInicial):
    ax = plt.gca()
    ax.relim()
    ax.autoscale_view()
+   plt.axhline(dineroInicial,color='w', ls="solid",visible=False) #Linea invisible para agregar legend
+   dineroIni = 'Capital inicial: ' + str(dineroInicial)
+   dineroFin = 'Capital Final: ' + str(round(dineroTiempo[-1],2))
+   plt.legend((dineroIni,dineroFin), loc="lower left")
    plt.show()
 
 def graficarFrecuencias(frecuenciaPromedio,indice):
@@ -148,41 +152,70 @@ def apostarDocena(apuesta, dinero, numeros):
 
   return dineroTiempo, frecuenciaRelativa, indice
 
+def apostarAUnNumero(apuesta, dinero, numeros):
+  numeroApostado = 5
+  apuesta = apuesta
+  dineroJugador = dinero
+  dineroTiempo = []
+  indice = 0
+  contFrecuencias = 0
+  frecuenciaRelativa = []
+  dineroTiempo.append(dineroJugador)
+  for i in range(1000):
+      if(dineroJugador >= apuesta):
+          numero = numeros[i]
+          if(numero == numeroApostado):
+              dineroJugador = dineroJugador + (apuesta * 36)
+              contFrecuencias += 1
+          else:
+              dineroJugador = dineroJugador - apuesta #el dinero final se corta mucho antes porque la apuesta es mas grande
 
-apuestaInicial = 50
+          dineroTiempo.append(dineroJugador)
+          indice += 1
+          frecuenciaRelativa.append(contFrecuencias/indice)
+
+  return dineroTiempo, frecuenciaRelativa, indice
+
+
+apuestaInicial = 25
 capitalJugadorAcotado = 1000
 capitalJugadorIdeal = 100_000
 
 dineroMartinGalaAcotado = []
 dineroDalembertAcotado = []
 dineroDocenaAcotado = []
+dineroNumeroAcotado = []
 dineroDocenaIdeal = []
 dineroMartinGalaIdeal = []
 dineroDalembertIdeal = []
+dineroNumeroIdeal = []
 
 numeros = generarNumeroAleatorios()
 
 #Graficas para 1 tirada Capital acotado
 resultadoMartingala = martinGala(apuestaInicial,capitalJugadorAcotado,numeros)
-resultadoDalembert = dalembert(1,capitalJugadorAcotado,numeros)
-resultadoDocena = apostarDocena(1,capitalJugadorAcotado,numeros)
+resultadoDalembert = dalembert(apuestaInicial,capitalJugadorAcotado,numeros)
+resultadoDocena = apostarDocena(apuestaInicial,capitalJugadorAcotado,numeros)
+resultadosNumero = apostarAUnNumero(apuestaInicial,capitalJugadorAcotado,numeros)
 graficoDineroPrimeraTirada(resultadoMartingala[0],'Apuesta Martingala',capitalJugadorAcotado)
 graficarFrecuencias(resultadoMartingala[1],resultadoMartingala[2])
 graficoDineroPrimeraTirada(resultadoDalembert[0],'Apuesta Dalembert',capitalJugadorAcotado)
 graficarFrecuencias(resultadoDalembert[1], resultadoDalembert[2])
 graficoDineroPrimeraTirada(resultadoDocena[0],'Apuesta a docena',capitalJugadorAcotado)
 graficarFrecuencias(resultadoDocena[1], resultadoDocena[2])
-
+graficoDineroPrimeraTirada(resultadosNumero[0],'Apuesta a Numero',capitalJugadorAcotado)
+graficarFrecuencias(resultadosNumero[1],resultadosNumero[2])
 for i in range(5):
     numeros = generarNumeroAleatorios()
     dineroMartinGalaIdeal.append(martinGala(apuestaInicial,capitalJugadorIdeal,numeros)[0])
     dineroDalembertIdeal.append(dalembert(apuestaInicial,capitalJugadorIdeal,numeros)[0])
     dineroDocenaIdeal.append(apostarDocena(apuestaInicial,capitalJugadorIdeal,numeros)[0])
-
+    dineroNumeroIdeal.append(apostarAUnNumero(apuestaInicial,capitalJugadorIdeal,numeros)[0])
 #Graficas en simultaneo de 5 corridas
 graficoDinero(dineroMartinGalaIdeal,'Apuesta Martingala',capitalJugadorIdeal)
 graficoDinero(dineroDalembertIdeal,'Apuesta Dalembert',capitalJugadorIdeal)
 graficoDinero(dineroDocenaIdeal,'Apuesta a docena',capitalJugadorIdeal)
+graficoDinero(dineroNumeroIdeal,'Apuesta a Numero',capitalJugadorIdeal)
 
 
 
