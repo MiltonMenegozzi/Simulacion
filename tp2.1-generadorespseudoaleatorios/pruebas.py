@@ -2,11 +2,14 @@ from scipy.stats import kstest
 import scipy.stats as stats
 import numpy as np
 from scipy.stats import ksone
+from scipy.stats import norm
+from math import sqrt
 
 #Pruebas definidas para ver si los generadores pasan los test
 #Prueba chi-cuadrado
 #Prueba Kolmogorov-Smirnov.
 #Prueba de paridad
+#Prueba de corrida
 
 def Kolmogorov(numeros, alpha):
 
@@ -21,8 +24,8 @@ def Kolmogorov(numeros, alpha):
 #Obtengo el mas grande
     D = max(abs(D_Mas) ,abs(D_Menos))
 
-#Busco el valor crítico de la tabla de kolmogorov para ese nivel de significancia y lo comparo con D
-#Si D es menor que el valor crítico puedo decir que los datos pertenecen a una distribución uniforme
+#Busco el valor critico de la tabla de kolmogorov para ese nivel de significancia y lo comparo con D
+#Si D es menor que el valor critico puedo decir que los datos pertenecen a una distribucion uniforme
 #Para buscar los datos uso la libreria de scipy
     valor_critico = (ksone.pdf(alpha/2, tamaño))
     if D < valor_critico:
@@ -55,18 +58,47 @@ def ChiCuadrado(numerosAleatorios,q,df):
        return True
 
 
-def Paridad(lista):
-   pares,impares = 0,0
-   nuevalista=[]
-   x=1
-   for x in range (len(lista)):
-       if x!=0:
-           n = str(lista[x]).split('.')[1]
-           nuevalista.append(int(n[0:5]))
-   for i in nuevalista:
-       if i%2 == 0 :
-           pares+=1
-       else:
-           impares+=1
-   return pares, impares
+def Paridad(numeros):
+    pares, impares = 0, 0
+    i = 1
+    for i in range(len(numeros)):
+        if (float(str(numeros[i])[-1]))%2==0: #Tomo solo el ultimo numero porque si no esta con formato e^-05
+            pares += 1
+        else:
+            impares +=1
+    return pares, impares
 
+
+def PruenaDeCorrida(numeros, alpha):
+    secuencia_signos = []
+    #Asignar signo a la secuencia
+    #Xi<Xi+1 entonces es +
+    #Xi>Xi+1 entonces es -
+    for i in range(len(numeros)-1):
+        if numeros[i]<numeros[i+1]:
+            secuencia_signos.append('+')
+        else:
+            secuencia_signos.append('-')
+    #Calcular total de corridas que resulte de la suma de terminos iguales
+    print(secuencia_signos)
+    a = 0
+    for i in range(len(secuencia_signos)-1):
+        if secuencia_signos[i] != secuencia_signos[i+1]:
+            a += 1
+
+    #Calculo media y varianza
+    tamaño = len(numeros)
+    media = (2*tamaño-1/3)
+    var = (16*tamaño-29)/90
+
+    #Criterio de aceptacion: Z <= Z obtenido de tabla
+    #Obtengo z de la tabla
+    z_tabla = norm.ppf(q=1-alpha/2)
+    #Calculo mi z
+    z_calculado = abs((a-media/sqrt(var)))
+    #Comparo
+
+    if z_calculado <= z_tabla:
+        return True
+    else:
+        return False
