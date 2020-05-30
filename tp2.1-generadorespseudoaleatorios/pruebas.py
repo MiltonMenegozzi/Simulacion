@@ -29,8 +29,11 @@ def Kolmogorov(numeros, alpha):
 #Para buscar los datos uso la libreria de scipy
     valor_critico = (ksone.pdf(alpha/2, tamaño))
     if D < valor_critico:
-        return True
-    return False
+        resultado = True
+    else:
+        resultado = False
+
+    return resultado, D_Mas, D_Menos, valor_critico
 
 
 def ChiCuadrado(numerosAleatorios,q,df):
@@ -38,10 +41,13 @@ def ChiCuadrado(numerosAleatorios,q,df):
    frec_obt_int = np.histogram(numeros, bins=(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))  # Frecuencia en cada intervalo
    # Frecuencia en cada rango
    suma_epic = 0
+   arreglo_suma_epic = []
    cont = len(numeros) / 10
    # 3. a cada intervalo le aplico la siguiente ecuacion (Ef - Ee)^2/Ee y hago la sumatoria
    for i in range(10):
-       suma_epic += ((frec_obt_int[0][i - 1] - cont) ** 2) / cont
+       calculo = ((frec_obt_int[0][i - 1] - cont) ** 2) / cont
+       arreglo_suma_epic.append(calculo)
+   suma_epic = sum(arreglo_suma_epic)
    # 5. comparo en tabla de chi cuadrado con un nivel de confianza
    # Se hace con el valor suma epic
    # Si suma_epic es mayor que el valor por tabla, se rechaza ( no es uniforme)
@@ -52,11 +58,12 @@ def ChiCuadrado(numerosAleatorios,q,df):
    chi_cuadrado_tabla = stats.chi2.ppf(q=q, df=df)
 
 
-   if  suma_epic < chi_cuadrado_tabla:
-       return False
+   if suma_epic < chi_cuadrado_tabla:
+       resultado = True
    else:
-       return True
+       resultado = False
 
+   return  resultado, arreglo_suma_epic, suma_epic, chi_cuadrado_tabla
 
 def Paridad(numeros):
     pares, impares = 0, 0
@@ -74,13 +81,15 @@ def PruenaDeCorrida(numeros, alpha):
     #Asignar signo a la secuencia
     #Xi<Xi+1 entonces es +
     #Xi>Xi+1 entonces es -
+    media = 0
+    var = 0
+    tamaño = 0
     for i in range(len(numeros)-1):
         if numeros[i]<numeros[i+1]:
             secuencia_signos.append('+')
         else:
             secuencia_signos.append('-')
     #Calcular total de corridas que resulte de la suma de terminos iguales
-    print(secuencia_signos)
     a = 0
     for i in range(len(secuencia_signos)-1):
         if secuencia_signos[i] != secuencia_signos[i+1]:
@@ -88,17 +97,19 @@ def PruenaDeCorrida(numeros, alpha):
 
     #Calculo media y varianza
     tamaño = len(numeros)
-    media = (2*tamaño-1/3)
-    var = (16*tamaño-29)/90
+    media = ((2*tamaño)-1)/3
+    var = ((16*tamaño)-29)/90
 
     #Criterio de aceptacion: Z <= Z obtenido de tabla
     #Obtengo z de la tabla
     z_tabla = norm.ppf(q=1-alpha/2)
     #Calculo mi z
-    z_calculado = abs((a-media/sqrt(var)))
+    z_calculado = abs((a-media)/sqrt(var))
     #Comparo
 
     if z_calculado <= z_tabla:
-        return True
+        resultado = True
     else:
-        return False
+        resultado = False
+
+    return resultado, z_calculado, z_tabla, a, media, var

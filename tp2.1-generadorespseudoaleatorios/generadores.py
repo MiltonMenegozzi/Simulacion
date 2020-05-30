@@ -9,7 +9,8 @@ def media_de_los_cuadrados(seed, i):
         num = int(str(semilla[i] * semilla[i]).zfill(8)[2:6])
         semilla.append(num)
         valor.append(semilla[i] * semilla[i])
-        print('Semilla: ',semilla[i],'\t- valor: ',valor[i])
+        #print('Semilla: ',semilla[i],'\t- valor: ',valor[i])
+    return valor
 
 def generadorgcl(seed, a, c, m, n):
     #Args:
