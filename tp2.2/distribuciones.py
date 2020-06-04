@@ -1,14 +1,11 @@
 import numpy as np
 
 def distribucion_uniforme(a,b):
-    for i in range(100):
-        r = np.random.rand()
-        x = a+(b-a)*r #Lo transforma a mi intervalo a,b
-        #return x
-        print(x)
+    r = np.random.uniform(0,1)
+    x = a+(b-a)*r #transformo del intervalo (0,1) al intervalo (a,b)
+    return x
 
 def distribucion_exponencial(ex):
-    for i in range(100):
-        r = np.random.rand()
-        x = ex-np.log(r)
-        print(x)
+    r = np.random.uniform(0,1)
+    x = -ex*np.log(r)
+    return x
