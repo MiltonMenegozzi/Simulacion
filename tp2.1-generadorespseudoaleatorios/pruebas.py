@@ -38,7 +38,7 @@ def Kolmogorov(numeros, alpha):
 
 def ChiCuadrado(numerosAleatorios,q,df):
    numeros = numerosAleatorios
-   frec_obt_int = np.histogram(numeros, bins=(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))  # Frecuencia en cada intervalo
+   frec_obt_int = np.histogram(numeros, bins=(0,1,2,3,4,5,6,7,8,9,10))  # Frecuencia en cada intervalo
    # Frecuencia en cada rango
    suma_epic = 0
    arreglo_suma_epic = []
