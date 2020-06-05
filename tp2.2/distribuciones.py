@@ -9,3 +9,7 @@ def distribucion_exponencial(ex):
     r = np.random.uniform(0,1)
     x = -ex*np.log(r)
     return x
+
+def distribucion_normal(mu,sigma):
+    x = np.random.normal(mu,sigma)
+    return x
