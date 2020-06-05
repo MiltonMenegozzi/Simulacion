@@ -2,6 +2,7 @@ import distribuciones
 import graficas
 import numpy as np
 import pruebas
+import scipy.stats as stats
 
 uniforme = []
 exponencial = []
@@ -27,4 +28,4 @@ print(pruebas.Kolmogorov(uniforme, 0.05))
 
 #NORMAL
 graficas.histograma(normal)
-print(pruebas.Kolmogorov(normal,0.05))
+print(stats.kstest(normal,'norm'))
