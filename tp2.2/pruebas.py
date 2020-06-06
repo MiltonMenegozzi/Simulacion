@@ -4,11 +4,13 @@ import numpy as np
 from scipy.stats import ksone
 from scipy.stats import norm
 from math import sqrt
+from math import floor
+from scipy.stats import chi2
 from scipy.stats import anderson
 
 def ChiCuadrado(numerosAleatorios,q,df):
    numeros = numerosAleatorios
-   frec_obt_int = np.histogram(numeros, bins=(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))  # Frecuencia en cada intervalo
+   frec_obt_int = np.histogram(numeros, bins=10)  # Frecuencia en cada intervalo
    # Frecuencia en cada rango
    suma_epic = 0
    arreglo_suma_epic = []
@@ -59,13 +61,14 @@ def Kolmogorov(numeros, alpha):
 
     return resultado, D_Mas, D_Menos, valor_critico
 
-def Anderson(array_distribucion):
-    result = anderson(array_distribucion, 'expon')
+def Anderson(array_distribucion,tipo):
+    result = anderson(array_distribucion, tipo)
     print('Statistic: %.3f' % result.statistic)
     p = 0
     for i in range(len(result.critical_values)):
         sl, cv = result.significance_level[i], result.critical_values[i]
         if result.statistic < result.critical_values[i]:
-            print('%.3f: %.3f, los datos provienen de una distribucion exponencial (Se acepta H0)' % (sl, cv))
+            print('%.3f: %.3f, (Se acepta H0)' % (sl, cv))
         else:
-            print('%.3f: %.3f, los datos no provienen de una distribucion exponencial (Se rechaza H0)' % (sl, cv))
+            print('%.3f: %.3f, (Se rechaza H0)' % (sl, cv))
+
