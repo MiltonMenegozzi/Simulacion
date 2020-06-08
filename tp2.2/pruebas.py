@@ -3,6 +3,7 @@ import scipy.stats as stats
 import numpy as np
 from scipy.stats import ksone
 from scipy.stats import norm
+from scipy.stats import chisquare
 from math import sqrt
 from math import floor
 from scipy.stats import chi2
@@ -72,3 +73,12 @@ def Anderson(array_distribucion,tipo):
         else:
             print('%.3f: %.3f, (Se rechaza H0)' % (sl, cv))
 
+def chiScipy(numeros):
+    frecObt = np.histogram(numeros, bins=10)
+    frecEsp = []
+    for i in range(10):
+        frecEsp.append(len(numeros)/10)
+    return chisquare(frecObt[0], frecEsp)
+
+def KolmogorovScipy(numeros):
+    return stats.kstest(numeros,'gamma'(size=100000))

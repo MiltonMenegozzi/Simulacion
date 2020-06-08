@@ -1,75 +1,116 @@
 import numpy as np
+import generador
+import random
+
+numerosGCL = generador.generadorgcl(1234,134775813, 1, pow(2, 32),100000)
+#numerosBologna = generador.generadorgcl(3298876,134775813,1,pow(2,32),10000)
+
+uniforme = []
+exponencial = []
+normal = []
+gamma = []
+pascal = []
+binomial = []
+hipergeometrica = []
+poisson = []
+empirica = []
 
 def distribucion_uniforme(a,b):
-    r = np.random.uniform(0,1)
-    x = a+(b-a)*r #transformo del intervalo (0,1) al intervalo (a,b)
-    return x
+    for r in numerosGCL:
+        x = a+(b-a)*r #transformo del intervalo (0,1) al intervalo (a,b)
+        uniforme.append(x)
+    return uniforme
 
 def distribucion_exponencial(ex):
-    r = np.random.uniform(0,1)
-    x = -ex*np.log(r)
-    return x
-
-def distribucion_normal(mu,sigma):
-    sum = 0.0
-    for i in range(12):
-        r = np.random.uniform(0,1)
-        sum = sum + r
-    x = sigma * (sum - 6.0) + mu
-    return x
+    for r in numerosGCL:
+        x = -ex*np.log(r)
+        exponencial.append(x)
+    return exponencial
 
 def distribucion_gamma(k,alpha):
-    tr = 1.0
-    for i in range(k):
-        r = np.random.uniform(0,1)
-        tr = tr *  r
-    x = -np.log(tr)/alpha
-    return x
+    for i in range(100000):
+        tr = 1.0
+        for i in range(k):
+            r = random.choice(numerosGCL)
+            tr = tr *  r
+        x = -np.log(tr)/alpha
+        gamma.append(x)
+    return gamma
+
+def distribucion_normal(mu,sigma):
+    for i in range(100000):
+        sum = 0.0
+        for i in range(12):
+            r = random.choice(numerosGCL)
+            sum = sum + r
+        x = sigma * (sum - 6.0) + mu
+        normal.append(x)
+    return normal
+
 
 def distribucion_pascal(k,q):
-    tr = 1.0
-    qr = np.log(q)
-    for i in range(k):
-        r = np.random.uniform(0,1)
-        tr = tr * r
-    nx = np.log(tr)/qr
-    x = nx
-    return x
+    for i in range(100000):
+        tr = 1.0
+        qr = np.log(q)
+        for i in range(k):
+            r = random.choice(numerosGCL)
+            tr = tr * r
+        nx = np.log(tr)/qr
+        x = nx
+        pascal.append(x)
+    return pascal
 
 def distribucion_binomial(n,p):
-    x = 0.0
-    for i in range(n):
-        r = np.random.uniform(0,1)
-        if (r-p) < 0:
-            x += 1
-    return x
+    for i in range(100000):
+        x = 0.0
+        for i in range(n):
+            r = random.choice(numerosGCL)
+            if (r-p) < 0:
+                x += 1
+        binomial.append(x)
+    return binomial
 
 def distribucion_hipergeometrica(tn,ns,p):
-    #TN = N
-    #NS = n
-    x = 0.0
-    for i in range(ns):
-        r = np.random.uniform(0,1)
-        if (r-p) > 0:
-            s = 0.0
-        else:
-            s = 1.0
-            x = x + 1.0
-        p = (tn*p-s) / (tn-1.0)
-        tn = tn - 1.0
-    return x
+    for i in range(100000):
+        x = 0.0
+        for i in range(ns):
+            r = random.choice(numerosGCL)
+            if (r-p) > 0:
+                s = 0.0
+            else:
+                s = 1.0
+                x = x + 1.0
+            p = (tn*p-s) / (tn-1.0)
+            tn = tn - 1.0
+        hipergeometrica.append(x)
+    return hipergeometrica
 
 def distribucion_poisson(p):
-    #p = lambda
-    x = 0.0
-    b = np.exp(-p)
-    tr = 1.0
-    while (tr-b) >= 0:
-        r = np.random.uniform(0,1)
-        tr = tr * r
-        if(tr-b >= 0):
-            x = x + 1.0
-    return x
+    for i in range(100000):
+        x = 0.0
+        b = np.exp(-p)
+        tr = 1.0
+        while (tr-b) >= 0:
+            r = random.choice(numerosGCL)
+            tr = tr * r
+            if(tr-b >= 0):
+                x = x + 1.0
+        poisson.append(x)
+    return poisson
 
+def distribucion_empirica():
+    p=[0.273,0.037,0.195,0.009,0.124,0.058,0.062,0.151,0.047,0.044]
+    for i in range(100000):
+        r = random.choice(numerosGCL)
+        acum=0
+        cont=1
+        for j in p:
+            acum = acum + j
+            if (r<=acum):
+                break
+            else:
+                cont+=1
+        empirica.append(cont)
+    return empirica
 
 
