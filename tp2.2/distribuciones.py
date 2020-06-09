@@ -1,6 +1,7 @@
 import numpy as np
 import generador
 import random
+import math
 
 numerosGCL = generador.generadorgcl(1234,134775813, 1, pow(2, 32),10000)
 #numerosBologna = generador.generadorgcl(3298876,134775813,1,pow(2,32),10000)
@@ -37,6 +38,7 @@ def distribucion_gamma(k,alpha):
         gamma.append(x)
     return gamma
 
+
 def distribucion_normal(mu,sigma):
     for i in range(10000):
         sum = 0.0
@@ -58,6 +60,7 @@ def distribucion_pascal(k,q):
         x = nx
         pascal.append(x)
     return pascal
+
 
 def distribucion_binomial(n,p):
     for i in range(10000):

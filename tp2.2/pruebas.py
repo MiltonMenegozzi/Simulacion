@@ -8,6 +8,7 @@ from math import sqrt
 from math import floor
 from scipy.stats import chi2
 from scipy.stats import anderson
+from scipy import stats
 
 def ChiCuadrado(numerosAleatorios,q,df):
    numeros = numerosAleatorios
@@ -36,7 +37,7 @@ def ChiCuadrado(numerosAleatorios,q,df):
    else:
        resultado = False
 
-   return  resultado, arreglo_suma_epic, suma_epic, chi_cuadrado_tabla
+   return arreglo_suma_epic
 
 def Kolmogorov(numeros, alpha):
 
@@ -73,12 +74,25 @@ def Anderson(array_distribucion,tipo):
         else:
             print('%.3f: %.3f, (Se rechaza H0)' % (sl, cv))
 
-def chiScipy(numeros):
-    frecObt = np.histogram(numeros, bins=10)
-    frecEsp = []
-    for i in range(10):
-        frecEsp.append(len(numeros)/10)
-    return chisquare(frecObt[0], frecEsp)
-
 def KolmogorovScipy(numeros):
-    return stats.kstest(numeros,'gamma'(size=100000))
+    return stats.kstest(numeros,'gamma')
+
+def chiGenerica(frec_observados,bins):
+    f_obs = np.histogram(frec_observados, bins=bins)[0]/2000
+    f_esp = calcularFrecuenciaEsperada(f_obs,bins)
+    arreglo_suma_epic = []
+    for i in range(bins-1):
+        calculo = ((f_obs[i] - f_esp[i]) ** 2) / f_esp[i]
+        arreglo_suma_epic.append(calculo)
+    suma_epic = sum(arreglo_suma_epic)
+    chi_cuadrado_tabla = stats.chi2.ppf(q=0.95, df=9)
+    if suma_epic < chi_cuadrado_tabla:
+        resultado = True
+    else:
+        resultado = False
+    return arreglo_suma_epic
+
+def calcularFrecuenciaEsperada(frec_observados, bins):
+    f_esp_numpy = np.array(frec_observados)
+    return stats.relfreq(f_esp_numpy, numbins=bins)[0]
+
